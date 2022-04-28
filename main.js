@@ -9,22 +9,21 @@ async function callUser() {
   const peerId = document.querySelector("input").value;
   // grab the camera and mic
   const stream = await navigator.mediaDevices.getUserMedia({
-    video: true,
     audio: true,
   });
   // switch to the video call and play the camera preview
   document.getElementById("menu").style.display = "none";
   document.getElementById("live").style.display = "block";
-  document.getElementById("local-video").srcObject = stream;
-  document.getElementById("local-video").play();
+  document.getElementById("local-audio").srcObject = stream;
+  document.getElementById("local-audio").play();
   // make the call
   const call = peer.call(peerId, stream);
   call.on("stream", (stream) => {
-    document.getElementById("remote-video").srcObject = stream;
-    document.getElementById("remote-video").play();
+    document.getElementById("remote-audio").srcObject = stream;
+    document.getElementById("remote-audio").play();
   });
   call.on("data", (stream) => {
-    document.querySelector("#remote-video").srcObject = stream;
+    document.querySelector("#remote-audio").srcObject = stream;
   });
   call.on("error", (err) => {
     console.log(err);
@@ -40,11 +39,11 @@ peer.on("call", (call) => {
   if (confirm(`Accept call from ${call.peer}?`)) {
     // grab the camera and mic
     navigator.mediaDevices
-      .getUserMedia({ video: true, audio: true })
+      .getUserMedia({ audio: true })
       .then((stream) => {
         // play the local preview
-        document.querySelector("#local-video").srcObject = stream;
-        document.querySelector("#local-video").play();
+        document.querySelector("#local-audio").srcObject = stream;
+        document.querySelector("#local-audio").play();
         // answer the call
         call.answer(stream);
         // save the close function
@@ -54,8 +53,8 @@ peer.on("call", (call) => {
         document.querySelector("#live").style.display = "block";
         call.on("stream", (remoteStream) => {
           // when we receive the remote stream, play it
-          document.getElementById("remote-video").srcObject = remoteStream;
-          document.getElementById("remote-video").play();
+          document.getElementById("remote-audio").srcObject = remoteStream;
+          document.getElementById("remote-audio").play();
         });
       })
       .catch((err) => {
